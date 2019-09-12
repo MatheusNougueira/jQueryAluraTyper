@@ -6,9 +6,9 @@ $(function () {
     atualizaTamanhoFrase();
     incializaContadores();
     incializaCronometro();
+    inicializaMarcadores();
     //atalho para o evento click
     $("#botao-reiniciar").click(reiniciaJogo);
-    inicializaMarcadores();
 });
 
 function atualizaTamanhoFrase() {
@@ -28,8 +28,7 @@ function incializaContadores() {
         //.val nos da acesso ao que está dentro do input
         var conteudo = campo.val();
         //adicionando a quantidade de palavras
-        var qtdPalavras = conteudo.split(/\s+/).length - 1;//tirando espaços vazios com expressão regular
-        //a expressão regular será responsável por buscar qualquer caractere, exceto espaço vazio
+        var qtdPalavras = conteudo.split(" ").length;
         $("#contador-palavras").text(qtdPalavras);
 
         var qtdCaracteres = conteudo.length;
@@ -49,16 +48,21 @@ function incializaCronometro() {
 
             $("#tempo-digitacao").text(tempoRestante);
             if (tempoRestante == 0) {
-                //attr modifica o atributo
-                //adicionando disabled na textArea
-                campo.attr("disabled", true);
                 //clearInterval ira parar o intervalo quando a condição for verdadeira
                 clearInterval(cronometroID);
-                //chamando um class CSS
-                campo.addClass("campo-desativado")
+                finalizaJogo();
             }
-        }, 1000)
+        }, 1000);
     });
+}
+
+function finalizaJogo() {
+    //attr modifica o atributo
+    //adicionando disabled na textArea
+    campo.attr("disabled", true);
+    //chamando um class CSS
+    campo.toggleClass("campo-desativado");
+    inserePlacar();
 }
 
 // $("#botao-reiniciar").on("click", function(){
@@ -71,8 +75,6 @@ function inicializaMarcadores() {
     campo.on("input", function () {
         var digitado = campo.val();
         var comparavel = frase.substr(0, digitado.length);
-        console.log("Digitado:" + digitado);
-        console.log("Frase C:" + comparavel);
 
         if (digitado == comparavel) {
             campo.addClass("borda-verde")
